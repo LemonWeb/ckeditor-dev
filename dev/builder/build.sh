@@ -27,6 +27,25 @@ function command_exists
 	command -v "$1" > /dev/null 2>&1;
 }
 
+function base_36 {
+        b36arr=(0 1 2 3 4 5 6 7 8 9 A B C D E F G H I J K L M N O P Q R S T U V W X Y Z)
+        for     i in $(echo "obase=36; $1"| bc)
+        do      echo -n ${b36arr[${i#0}]}
+        done
+        echo
+}
+
+for part in $(date -u +"%y %m %d %H")
+do
+    SUFFIX_PARTS+=(`base_36 ${part}`)
+done
+
+SUFFIX=`echo ${SUFFIX_PARTS[*]} | tr -d ' '`;
+
+if [ -d $1 ]; then
+    rm -rf $1
+fi
+
 # Move to the script directory.
 cd $(dirname $0)
 
@@ -54,7 +73,17 @@ cd ../..
 echo ""
 echo "Starting CKBuilder..."
 
-java -jar ckbuilder/$CKBUILDER_VERSION/ckbuilder.jar --build ../../ release --version="4.4.0 DEV" --build-config build-config.js --overwrite "$@"
+java -jar ckbuilder/$CKBUILDER_VERSION/ckbuilder.jar -s -d 1 --no-zip --no-tar --build ../../ release --version="4.4.0 Stable" --build-config build-config.js --overwrite "$@"
 
 echo ""
-echo "Release created in the \"release\" directory."
+echo "Suffixing icons.png in skins/moono/editor.css"
+/bin/sed -i "s/icons\.png/icons\.png?t=${SUFFIX}/g" release/ckeditor/skins/moono/editor.css
+/bin/sed -i "s/icons_hidpi\.png/icons_hidpi\.png?t=${SUFFIX}/g" release/ckeditor/skins/moono/editor.css
+
+echo ""
+if [ $1 ]; then
+    cp -rf release/ckeditor/ $1
+    echo "Release created in \"${1}\""
+else
+    echo "Release created in the \"release\" directory."
+fi

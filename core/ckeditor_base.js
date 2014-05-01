@@ -115,7 +115,7 @@ if ( !window.CKEDITOR ) {
 				// var basePath in "core/loader.js".
 
 				// Find out the editor directory path, based on its <script> tag.
-				var path = window.CKEDITOR_BASEPATH || '';
+                var path = '/beheer/js/editor/ckeditor/';
 
 				if ( !path ) {
 					var scripts = document.getElementsByTagName( 'script' );

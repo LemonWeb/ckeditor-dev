@@ -78,6 +78,7 @@ CKEDITOR.lang[ 'nl' ] = {
 		width: 'Breedte',
 		height: 'Hoogte',
 		align: 'Uitlijning',
+        alignNone: 'Geen',
 		alignLeft: 'Links',
 		alignRight: 'Rechts',
 		alignCenter: 'Centreren',

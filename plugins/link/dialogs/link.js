@@ -648,22 +648,43 @@
 				title: linkLang.upload,
 				hidden: true,
 				filebrowser: 'uploadButton',
-				elements: [
-					{
-					type: 'file',
-					id: 'upload',
-					label: commonLang.upload,
-					style: 'height:40px',
-					size: 29
-				},
-					{
-					type: 'fileButton',
-					id: 'uploadButton',
-					label: commonLang.uploadSubmit,
-					filebrowser: 'info:url',
-					'for': [ 'upload', 'upload' ]
-				}
-				]
+                    elements: [
+                        {
+                            type: 'select',
+                            id: 'linkTargetType',
+                            label: commonLang.target,
+                            'default': 'notSet',
+                            style: 'width : 100%;',
+                            'items': [
+                                [ commonLang.notSet, 'notSet' ],
+                                [ linkLang.targetFrame, 'frame' ],
+                                [ linkLang.targetPopup, 'popup' ],
+                                [ commonLang.targetNew, '_blank' ],
+                                [ commonLang.targetTop, '_top' ],
+                                [ commonLang.targetSelf, '_self' ],
+                                [ commonLang.targetParent, '_parent' ]
+                            ],
+                            onChange: targetChanged,
+                            setup: function( data ) {
+                                if ( data.target )
+                                    this.setValue( data.target.type || 'notSet' );
+                                targetChanged.call( this );
+                            },
+                            commit: function( data ) {
+                                if ( !data.target )
+                                    data.target = {};
+
+                                data.target.type = this.getValue();
+                            }
+                        },
+                        {
+                            type: 'fileButton',
+                            id: 'uploadButton',
+                            label: commonLang.uploadSubmit,
+                            filebrowser: 'info:url',
+                            'for': [ 'upload', 'upload' ]
+                        }
+                    ]
 			},
 				{
 				id: 'advanced',
