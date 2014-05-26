@@ -16,7 +16,7 @@ CKEDITOR.editorConfig = function (config) {
      * Alle eventuele wijzigingen (ook) in de volgende repo doorvoeren en opnieuw builden:
      * $ git clone https://github.com/LemonWeb/ckeditor-dev.git
      * $ cd ckeditor-dev/
-     * $ git checkout release/stable
+     * $ git checkout stable
      * $ cd dev/builder/
      * $ ./build.sh [path]
      *
@@ -71,6 +71,7 @@ CKEDITOR.editorConfig = function (config) {
             'floatpanel,' +
             'font,' +
             'format,' +
+            'horizontalrule,' +
             'image2,' +
             'indent,' +
             'indentblock,' +

@@ -38,6 +38,7 @@ var CKBUILDER_CONFIG = {
         'floatpanel' : 1,
         'font' : 1,
         'format' : 1,
+        'horizontalrule' : 1,
         'image2' : 1,
         'indent' : 1,
         'indentblock' : 1,
