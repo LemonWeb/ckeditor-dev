@@ -239,7 +239,7 @@
                         else {
                             url += '&amp;';
                         }
-                        url += 'hl=pt_BR&amp;version=3';
+                        url += 'version=3';
 
                         content = '<object width="' + width + '" height="' + height + '">';
                         content += '<param name="movie" value="' + url + '"></param>';
