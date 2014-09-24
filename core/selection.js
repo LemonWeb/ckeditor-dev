@@ -278,9 +278,13 @@
 		var hiddenEl = editor._.hiddenSelectionContainer;
 
 		if ( hiddenEl ) {
+			var isDirty = editor.checkDirty();
+
 			editor.fire( 'lockSnapshot' );
 			hiddenEl.remove();
 			editor.fire( 'unlockSnapshot' );
+
+			!isDirty && editor.resetDirty();
 		}
 
 		delete editor._.hiddenSelectionContainer;
@@ -630,7 +634,7 @@
 									// Read the current cursor.
 									var rngEnd = body.$.createTextRange();
 
-									moveRangeToPoint( rngEnd, evt.x, evt.y );
+									moveRangeToPoint( rngEnd, evt.clientX, evt.clientY );
 
 									// Handle drag directions.
 									textRng.setEndPoint(
@@ -664,7 +668,7 @@
 									 evt.$.x < html.$.clientWidth ) {
 								// Start to build the text range.
 								var textRng = body.$.createTextRange();
-								moveRangeToPoint( textRng, evt.$.x, evt.$.y );
+								moveRangeToPoint( textRng, evt.$.clientX, evt.$.clientY );
 
 								// Records the dragging start of the above text range.
 								var startRng = textRng.duplicate();
@@ -1129,12 +1133,7 @@
 				fixInitialSelection( root, sel, true );
 		}
 		else if ( CKEDITOR.env.ie ) {
-			var active;
-
-			// IE8,9 throw unspecified error when trying to access document.$.activeElement.
-			try {
-				active = this.document.getActive();
-			} catch ( e ) {}
+			var active = this.document.getActive();
 
 			// IEs 9+.
 			if ( !isMSSelection ) {
@@ -1767,7 +1766,7 @@
 				this.selectRanges( ranges );
 				this.lock();
 				// Return to the previously focused element.
-				!focused.equals( this.root ) && focused.focus();
+				focused && !focused.equals( this.root ) && focused.focus();
 				return;
 			}
 
@@ -1808,8 +1807,11 @@
 
 				// IE doesn't support selecting the entire table row/cell, move the selection into cells, e.g.
 				// <table><tbody><tr>[<td>cell</b></td>... => <table><tbody><tr><td>[cell</td>...
-				if ( range.startContainer.type == CKEDITOR.NODE_ELEMENT && range.startContainer.getName() in nonCells || range.endContainer.type == CKEDITOR.NODE_ELEMENT && range.endContainer.getName() in nonCells )
+				if ( range.startContainer.type == CKEDITOR.NODE_ELEMENT && range.startContainer.getName() in nonCells || range.endContainer.type == CKEDITOR.NODE_ELEMENT && range.endContainer.getName() in nonCells ) {
 					range.shrink( CKEDITOR.NODE_ELEMENT, true );
+					// The range might get collapsed (#7975). Update cached variable.
+					collapsed = range.collapsed;
+				}
 
 				var bookmark = range.createBookmark();
 

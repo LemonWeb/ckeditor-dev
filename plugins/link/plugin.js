@@ -105,7 +105,8 @@
 
 			// If event was cancelled, link passed in event data will not be selected.
 			editor.on( 'doubleclick', function( evt ) {
-				if ( evt.data.dialog == 'link' && evt.data.link )
+				// Make sure both links and anchors are selected (#11822).
+				if ( evt.data.dialog in { link: 1, anchor: 1 } && evt.data.link )
 					editor.getSelection().selectElement( evt.data.link );
 			}, null, null, 20 );
 
@@ -535,12 +536,6 @@
 					retval.advanced = advanced;
 			}
 
-			// Find out whether we have any anchors in the editor.
-			var anchors = CKEDITOR.plugins.link.getEditorAnchors( editor );
-
-			if ( anchors.length )
-				retval.anchors = anchors;
-
 			return retval;
 		},
 
@@ -759,5 +754,19 @@
 		 * @member CKEDITOR.config
 		 */
 		linkShowTargetTab: true
+
+		/**
+		 * Whether JavaScript code is allowed as a `href` attribute in an anchor tag.
+		 * With this option enabled it is possible to create links like:
+		 *
+		 *		<a href="javascript:alert('Hello world!')">hello world</a>
+		 *
+		 * By default JavaScript links are not allowed and will not pass
+		 * the Link dialog window validation.
+		 *
+		 * @since 4.4.1
+		 * @cfg {Boolean} [linkJavaScriptLinksAllowed=false]
+		 * @member CKEDITOR.config
+		 */
 	} );
 } )();

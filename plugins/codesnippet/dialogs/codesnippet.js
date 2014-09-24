@@ -10,16 +10,13 @@
 		var snippetLangs = editor._.codesnippet.langs,
 			lang = editor.lang.codesnippet,
 			clientHeight = document.documentElement.clientHeight,
-			tabulationString = editor.config.codesnippet_tabulation || '    ',
 			langSelectItems = [],
-			langSelectDefaultValue,
 			snippetLangId;
+
+		langSelectItems.push( [ editor.lang.common.notSet, '' ] );
 
 		for ( snippetLangId in snippetLangs )
 			langSelectItems.push( [ snippetLangs[ snippetLangId ], snippetLangId ] );
-
-		if ( langSelectItems.length )
-			langSelectDefaultValue = langSelectItems[ 0 ][ 1 ];
 
 		// Size adjustments.
 		var size = CKEDITOR.document.getWindow().getViewPaneSize(),
@@ -44,9 +41,9 @@
 							type: 'select',
 							label: lang.language,
 							items: langSelectItems,
-							'default': langSelectDefaultValue,
 							setup: function( widget ) {
-								this.setValue( widget.ready ? widget.data.lang : '' );
+								if ( widget.ready && widget.data.lang )
+									this.setValue( widget.data.lang );
 
 								// The only way to have an empty select value in Firefox is
 								// to set a negative selectedIndex.

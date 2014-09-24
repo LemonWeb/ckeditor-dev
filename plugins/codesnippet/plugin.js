@@ -14,7 +14,7 @@
 
 	CKEDITOR.plugins.add( 'codesnippet', {
 		requires: 'widget,dialog',
-		lang: 'bg,ca,cs,da,de,el,en,en-gb,eo,es,et,fa,fr,fr-ca,hr,hu,it,ja,ku,lt,lv,nb,nl,no,pl,pt,ro,ru,sk,sl,sq,sv,th,tt,ug,uk,vi', // %REMOVE_LINE_CORE%
+		lang: 'bg,ca,cs,da,de,el,en,en-gb,eo,es,et,fa,fi,fr,fr-ca,hr,hu,it,ja,km,ku,lt,lv,nb,nl,no,pl,pt,pt-br,ro,ru,sk,sl,sq,sv,th,tt,ug,uk,vi,zh,zh-cn', // %REMOVE_LINE_CORE%
 		icons: 'codesnippet', // %REMOVE_LINE_CORE%
 		hidpi: true, // %REMOVE_LINE_CORE%
 
@@ -273,7 +273,8 @@
 	// @param {CKEDITOR.editor} editor
 	function registerWidget( editor ) {
 		var codeClass = editor.config.codeSnippet_codeClass,
-			newLineRegex = /\r?\n/g;
+			newLineRegex = /\r?\n/g,
+			textarea = new CKEDITOR.dom.element( 'textarea' );
 
 		editor.widgets.add( 'codeSnippet', {
 			allowedContent: 'pre; code(language-*)',
@@ -318,14 +319,14 @@
 				if ( newData.code )
 					this.parts.code.setHtml( CKEDITOR.tools.htmlEncode( newData.code ) );
 
+				// Remove old .language-* class.
+				if ( oldData && newData.lang != oldData.lang )
+					this.parts.code.removeClass( 'language-' + oldData.lang );
+
 				// Lang needs to be specified in order to apply formatting.
 				if ( newData.lang ) {
 					// Apply new .language-* class.
 					this.parts.code.addClass( 'language-' + newData.lang );
-
-					// Remove old .language-* class.
-					if ( oldData && newData.lang != oldData.lang )
-						this.parts.code.removeClass( 'language-' + oldData.lang );
 
 					this.highlight();
 				}
@@ -345,13 +346,19 @@
 				if ( childrenArray.length != 1 || ( code = childrenArray[ 0 ] ).name != 'code' )
 					return;
 
+				// Upcast <code> with text only: http://dev.ckeditor.com/ticket/11926#comment:4
+				if ( code.children.length != 1 || code.children[ 0 ].type != CKEDITOR.NODE_TEXT )
+					return;
+
 				// Read language-* from <code> class attribute.
 				var matchResult = editor._.codesnippet.langsRegex.exec( code.attributes[ 'class' ] );
 
 				if ( matchResult )
 					data.lang = matchResult[ 1 ];
 
-				data.code = code.getHtml();
+				// Use textarea to decode HTML entities (#11926).
+				textarea.setHtml( code.getHtml() );
+				data.code = textarea.getValue();
 
 				code.addClass( codeClass );
 
@@ -420,6 +427,7 @@ CKEDITOR.config.codeSnippet_codeClass = 'hljs';
 
 /**
  * Restricts languages available in the "Code Snippet" dialog window.
+ * An empty value is always added to the list.
  *
  * **Note**: If using a custom highlighter library (the default is [highlight.js](http://highlightjs.org)),
  * you may need to refer to external documentation to set `config.codeSnippet_languages` properly.

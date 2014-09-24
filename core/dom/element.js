@@ -134,6 +134,7 @@ CKEDITOR.tools.extend( CKEDITOR.dom.element.prototype, {
 	 *		element.addClass( 'classB' ); // <div class="classA classB">
 	 *		element.addClass( 'classA' ); // <div class="classA classB">
 	 *
+	 * @chainable
 	 * @param {String} className The name of the class to be added.
 	 */
 	addClass: function( className ) {
@@ -144,6 +145,8 @@ CKEDITOR.tools.extend( CKEDITOR.dom.element.prototype, {
 				c += ' ' + className;
 		}
 		this.$.className = c || className;
+
+		return this;
 	},
 
 	/**
@@ -466,16 +469,15 @@ CKEDITOR.tools.extend( CKEDITOR.dom.element.prototype, {
 	 * @param {String} text The text to be set.
 	 * @returns {String} The inserted text.
 	 */
-	setText: function( text ) {
-		CKEDITOR.dom.element.prototype.setText = ( this.$.innerText != undefined ) ?
-			function( text ) {
-				return this.$.innerText = text;
-			} : function( text ) {
-				return this.$.textContent = text;
-			};
+	setText: ( function() {
+		var supportsTextContent = document.createElement( 'p' );
+		supportsTextContent.innerHTML = 'x';
+		supportsTextContent = supportsTextContent.textContent;
 
-		return this.setText( text );
-	},
+		return function( text ) {
+			this.$[ supportsTextContent ? 'textContent' : 'innerText' ] = text;
+		};
+	} )(),
 
 	/**
 	 * Gets the value of an element attribute.
@@ -980,21 +982,48 @@ CKEDITOR.tools.extend( CKEDITOR.dom.element.prototype, {
 	 * @returns {Boolean} `true` if the specified attribute is defined.
 	 */
 	hasAttribute: ( function() {
-		function standard( name ) {
+		function ieHasAttribute( name ) {
 			var $attr = this.$.attributes.getNamedItem( name );
-			return !!( $attr && $attr.specified );
+
+			if ( this.getName() == 'input' ) {
+				switch ( name ) {
+					case 'class':
+						return this.$.className.length > 0;
+					case 'checked':
+						return !!this.$.checked;
+					case 'value':
+						var type = this.getAttribute( 'type' );
+						return type == 'checkbox' || type == 'radio' ? this.$.value != 'on' : !!this.$.value;
+				}
+			}
+
+			if ( !$attr )
+				return false;
+
+			return $attr.specified;
 		}
 
-		return ( CKEDITOR.env.ie && CKEDITOR.env.version < 8 ) ?
-		function( name ) {
-			// On IE < 8 the name attribute cannot be retrieved
-			// right after the element creation and setting the
-			// name with setAttribute.
-			if ( name == 'name' )
-				return !!this.$.name;
+		if ( CKEDITOR.env.ie ) {
+			if ( CKEDITOR.env.version < 8 ) {
+				return function( name ) {
+					// On IE < 8 the name attribute cannot be retrieved
+					// right after the element creation and setting the
+					// name with setAttribute.
+					if ( name == 'name' )
+						return !!this.$.name;
 
-			return standard.call( this, name );
-		} : standard;
+					return ieHasAttribute.call( this, name );
+				};
+			} else {
+				return ieHasAttribute;
+			}
+		} else {
+			return function( name ) {
+				// On other browsers specified property is deprecated and return always true,
+				// but fortunately $.attributes contains only specified attributes.
+				return !!this.$.attributes.getNamedItem( name );
+			};
+		}
 	} )(),
 
 	/**
@@ -1665,8 +1694,9 @@ CKEDITOR.tools.extend( CKEDITOR.dom.element.prototype, {
 
 			if ( attrName == 'checked' && ( attrValue = this.getAttribute( attrName ) ) )
 				dest.setAttribute( attrName, attrValue );
-			// IE BUG: value attribute is never specified even if it exists.
-			else if ( attribute.specified || ( CKEDITOR.env.ie && attribute.nodeValue && attrName == 'value' ) ) {
+			// IE contains not specified attributes in $.attributes so we need to check
+			// if elements attribute is specified using hasAttribute.
+			else if ( !CKEDITOR.env.ie || this.hasAttribute( attrName ) ) {
 				attrValue = this.getAttribute( attrName );
 				if ( attrValue === null )
 					attrValue = attribute.nodeValue;
