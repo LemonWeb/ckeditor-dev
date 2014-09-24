@@ -74,8 +74,14 @@ cd ../..
 echo ""
 echo "Starting CKBuilder..."
 
-java -jar ckbuilder/$CKBUILDER_VERSION/ckbuilder.jar -s -d 1 --no-zip --no-tar --build ../../ release --version="4.4.4 Stable" --build-config build-config.js --overwrite "$@"
+JAVA_ARGS=${ARGS// -t / } # Remove -t from arrgs
 
+java -jar ckbuilder/$CKBUILDER_VERSION/ckbuilder.jar -s -d 1 --no-zip --no-tar --build ../../ release --version="4.4.4 Stable" --build-config build-config.js --overwrite $JAVA_ARGS
+
+echo ""
+echo "Suffixing icons.png in skins/moono/editor.css"
+/bin/sed -i "s/icons\.png/icons\.png?t=${SUFFIX}/g" release/ckeditor/skins/moono/editor.css
+/bin/sed -i "s/icons_hidpi\.png/icons_hidpi\.png?t=${SUFFIX}/g" release/ckeditor/skins/moono/editor.css
 
 # Copy and build tests
 if [[ "$ARGS" == *\ \-t\ * ]]; then
@@ -91,11 +97,6 @@ if [[ "$ARGS" == *\ \-t\ * ]]; then
 
 	(cd release/ckeditor &&	npm install && bender init)
 fi
-
-echo ""
-echo "Suffixing icons.png in skins/moono/editor.css"
-/bin/sed -i "s/icons\.png/icons\.png?t=${SUFFIX}/g" release/ckeditor/skins/moono/editor.css
-/bin/sed -i "s/icons_hidpi\.png/icons_hidpi\.png?t=${SUFFIX}/g" release/ckeditor/skins/moono/editor.css
 
 echo ""
 if [ $1 ]; then
