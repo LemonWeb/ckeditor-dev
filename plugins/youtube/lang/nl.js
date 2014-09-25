@@ -6,7 +6,7 @@ CKEDITOR.plugins.setLang('youtube', 'nl', {
 	txtWidth : 'Breedte',
 	txtHeight : 'Hoogte',
 	chkRelated : 'Toon gesuggereerde video aan het einde van de video',
-	txtStartAt : 'Starten op (ss of mm:ss of hh:mm:ss)',
+	txtStartAt : 'Starten op (in seconden)',
 	chkPrivacy : 'Privacy-enhanced mode inschakelen',
 	chkOlderCode : 'Gebruik oude embedcode',
 	chkAutoplay: 'Automatisch starten',
@@ -17,5 +17,6 @@ CKEDITOR.plugins.setLang('youtube', 'nl', {
 	noWidth : 'U moet een breedte ingeven',
 	invalidWidth : 'U moet een geldige breedte ingeven',
 	noHeight : 'U moet een hoogte ingeven',
-	invalidHeight : 'U moet een geldige starttijd ingeven'
+	invalidHeight : 'U moet een geldige starttijd ingeven',
+    editContextItem: 'Eigenschappen video'
 });

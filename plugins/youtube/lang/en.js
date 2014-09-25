@@ -6,7 +6,7 @@ CKEDITOR.plugins.setLang('youtube', 'en', {
 	txtWidth : 'Width',
 	txtHeight : 'Height',
 	chkRelated : 'Show suggested videos at the video\'s end',
-	txtStartAt : 'Start at (ss or mm:ss or hh:mm:ss)',
+	txtStartAt : 'Start at (in seconds)',
 	chkPrivacy : 'Enable privacy-enhanced mode',
 	chkOlderCode : 'Use old embed code',
 	chkAutoplay: 'Autoplay',
@@ -18,5 +18,6 @@ CKEDITOR.plugins.setLang('youtube', 'en', {
 	invalidWidth : 'Inform a valid width',
 	noHeight : 'You must inform the height',
 	invalidHeight : 'Inform a valid height',
-	invalidTime : 'Inform a valid start time'
+	invalidTime : 'Inform a valid start time',
+    editContextItem: 'Properties video'
 });
