@@ -1,3 +1,5 @@
+/* exported undoEventDispatchTestsTools */
+
 'use strict';
 
 /**
@@ -23,6 +25,8 @@ var undoEventDispatchTestsTools = function( testSuite ) {
 			var ckEvent = new CKEDITOR.dom.event( eventProperties );
 
 			testSuite.editor.editable().fire( eventType, ckEvent );
+			// Fire event on the <html> element - pretend event's bubbling.
+			testSuite.editor.document.getDocumentElement().fire( eventType, ckEvent );
 		}
 	};
 
@@ -74,9 +78,9 @@ var undoEventDispatchTestsTools = function( testSuite ) {
 		/**
 		 * Calls keyEvent() with given ammount of times.
 		 */
-		keyEventMultiple: function( repeatTimes, keyCode, eventInfo, skipInputEvent ) {
+		keyEventMultiple: function( repeatTimes, keyCode, eventInfo, skipInputEvent, domModificationFn ) {
 			for ( var i = 0; i < repeatTimes; i++ )
-				this.keyEvent( keyCode, eventInfo, skipInputEvent );
+				this.keyEvent( keyCode, eventInfo, skipInputEvent, domModificationFn );
 		},
 
 		/**

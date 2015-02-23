@@ -18,8 +18,8 @@
 		assert.areSame( '1 + 1 = 2', bender.tools.compatHtml( doc.getById( 'buffer' ).getElementsByTag( 'script' ).$[ 0 ].innerHTML ),
 			'MathJax should create script element containing equation in buffer.' );
 
-		assert.isTrue( parseInt( iFrame.getStyle( 'width' ) ) > 0, 'Width of iFrame should be grater that 0.' );
-		assert.isTrue( parseInt( iFrame.getStyle( 'height' ) ) > 0, 'Height of iFrame should be grater that 0.' );
+		assert.isTrue( parseInt( iFrame.getStyle( 'width' ), 10 ) > 0, 'Width of iFrame should be grater that 0.' );
+		assert.isTrue( parseInt( iFrame.getStyle( 'height' ), 10 ) > 0, 'Height of iFrame should be grater that 0.' );
 	}
 
 	bender.test( {
@@ -46,20 +46,22 @@
 			wait();
 		},
 
-		'async:init' : function() {
+		'async:init': function() {
 			if ( CKEDITOR.env.ie && CKEDITOR.env.version < 9 )
 				assert.ignore();
 
 			var tc = this;
 
 			editor = new CKEDITOR.replace( 'editor_mathjax', {
-					mathJaxLib: mathJaxLib,
-					extraAllowedContent: 'p{font-size}',
-					extraPlugins: 'font',
-					on: { 'instanceReady': function() {
-						editor.setData( '<p>A<span class="math-tex">\\\(1 + 1 = 2\\\)</span>B</p>' );
-					} }
-				} );
+				mathJaxLib: mathJaxLib,
+				extraAllowedContent: 'p{font-size}',
+				extraPlugins: 'font',
+				on: {
+					instanceReady: function() {
+						editor.setData( '<p>A<span class="math-tex">\\(1 + 1 = 2\\)</span>B</p>' );
+					}
+				}
+			} );
 
 			CKEDITOR.once( 'mathJaxUpdateDone', function() {
 				tc.callback();
@@ -77,7 +79,7 @@
 				} );
 			} );
 
-			editor.setData( '<p style="font-size:10px">A<span class="math-tex">\\\(1 + 1 = 2\\\)</span>B</p>' );
+			editor.setData( '<p style="font-size:10px">A<span class="math-tex">\\(1 + 1 = 2\\)</span>B</p>' );
 
 			wait();
 		},
@@ -88,11 +90,11 @@
 					editor.getSelection().selectElement( editor.document.getElementsByTag( 'p' ).getItem( 0 ) );
 
 					editor.applyStyle( new CKEDITOR.style( {
-						element : 'span',
+						element: 'span',
 						attributes: { 'style': 'font-size: 20px;' }
 					} ) );
 				},
-				then: function( iFrame, editor ) {
+				then: function( iFrame ) {
 					assert.areSame( '20px', iFrame.getFrameDocument().getById( 'preview' ).getComputedStyle( 'font-size' ) );
 				}
 			} );
@@ -121,7 +123,7 @@
 
 					editor.execCommand( 'bold' );
 				},
-				then: function( iFrame, editor ) {
+				then: function() {
 					that.checkMathJax( {
 						when: function( iFrame, editor ) {
 							editor.execCommand( 'undo' );

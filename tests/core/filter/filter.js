@@ -1,4 +1,5 @@
 /* bender-tags: editor,unit */
+/* global acfTestTools */
 
 ( function() {
 	'use strict';
@@ -132,8 +133,12 @@
 
 		'test elements filter - object with fns': function() {
 			var filter = createFilter( {
-				'p b i': function() { return true; },
-				'ul li': function() { return false; }
+				'p b i': function() {
+					return true;
+				},
+				'ul li': function() {
+					return false;
+				}
 			} );
 
 			filter( '<p><b>foo</b> <i>bar</i> <u>bum</u></p>',			'<p><b>foo</b> <i>bar</i> bum</p>' );
@@ -421,7 +426,7 @@
 				},
 
 				i: {
-					match: function( element ) {
+					match: function() {
 						return false;
 					},
 
@@ -578,8 +583,7 @@
 			t( '<strong>A</strong><br />B<em>C</em>D',
 				'<strong>A</strong><br />B<em>C</em>D',													'leave' );
 
-			t( '<span>A</span>B<kbd>C</kbd>D<hr />E',
-				CKEDITOR.env.ie && CKEDITOR.env.version < 9 ? 'ABCD<br /> E' : 'ABCD<br />E',			'strip inlines and hr' );
+			t( '<span>A</span>B<kbd>C</kbd>D<hr />E',				'ABCD<br />E',						'strip inlines and hr' );
 			t( '<h1>A</h1><p>B</p><p><em>C</em></p>',				'A<br />B<br /><em>C</em>',			'strip paragraphs and header' );
 			t( '<ul><li>A</li><li>B</li></ul>',						'A<br />B',							'strip list' );
 			t( 'A<table><tbody><tr><td>X</td><td>Y</td></tr><tr><td>W</td><td>Z</td></tr></tbody></table>C<br />D',
@@ -614,8 +618,7 @@
 			t( '<strong>A</strong><br />B<em>C</em>D',
 				'<strong>A</strong><br />B<em>C</em>D',													'leave' );
 
-			t( '<span>A</span>B<kbd>C</kbd>D<hr />E',
-				CKEDITOR.env.ie && CKEDITOR.env.version < 9 ? 'ABCD<br /> E' : 'ABCD<br />E',			'strip inlines and hr' );
+			t( '<span>A</span>B<kbd>C</kbd>D<hr />E',				'ABCD<br />E',						'strip inlines and hr' );
 			t( '<h1>A</h1><p>B</p><p><em>C</em></p>',				'A<br />B<br /><em>C</em>',			'strip paragraphs and header' );
 			t( '<ul><li>A</li><li>B</li></ul>',						'A<br />B',							'strip list' );
 			t( 'A<table><tbody><tr><td>X</td><td>Y</td></tr><tr><td>W</td><td>Z</td></tr></tbody></table>C<br />D',
@@ -642,13 +645,13 @@
 			filter( '<p>X<a name="x"></a>X</p>',					'<p>X<a name="x"></a>X</p>' );
 			filter( '<p>X<a name="x">A</a>X</p>',					'<p>X<a name="x">A</a>X</p>' );
 			filter( '<p>X<a name="x"><img src="x" /></a>X</p>',		'<p>X<a name="x"></a>X</p>' );
-			filter( '<p>X<a href="x" name="x">A</a>X</p>',			'<p>X<a name="x">A</a>X</p>' )
+			filter( '<p>X<a href="x" name="x">A</a>X</p>',			'<p>X<a name="x">A</a>X</p>' );
 			// Empty <a> element isn't correct unless it is an anchor (has non-empty name attrbiute).
 			// This behaviour conforms to the htmlDP's htmlFilter.
 			filter( '<p>X<a href="x" name=""></a>X</p>',			'<p>XX</p>' );
 			filter( '<p>X<a name="x" href="x"><img /></a>X</p>',	'<p>X<a name="x"></a>X</p>' );
 
-			var filter = createFilter( 'p; a[!href]' );
+			filter = createFilter( 'p; a[!href]' );
 
 			filter( '<p>X<a href="">A</a>X</p>',					'<p>X<a href="">A</a>X</p>' );
 			filter( '<p>X<a href="x">A</a>X</p>',					'<p>X<a href="x">A</a>X</p>' );
@@ -658,12 +661,12 @@
 			filter( '<p>X<a name="">A</a>X</p>',					'<p>XAX</p>' );
 			filter( '<p>X<a name="x">A</a>X</p>',					'<p>XAX</p>' );
 			filter( '<p>X<a name="x"><img src="x" /></a>X</p>',		'<p>XX</p>' );
-			filter( '<p>X<a href="x" name="x">A</a>X</p>',			'<p>X<a href="x">A</a>X</p>' )
+			filter( '<p>X<a href="x" name="x">A</a>X</p>',			'<p>X<a href="x">A</a>X</p>' );
 			filter( '<p>X<a href="x" name=""></a>X</p>',			'<p>XX</p>' );
 			filter( '<p>X<a href="x" name="x"></a>X</p>',			'<p>XX</p>' );
 			filter( '<p>X<a name="x" href="x"><img /></a>X</p>',	'<p>XX</p>' );
 
-			var filter = createFilter( 'p a' );
+			filter = createFilter( 'p a' );
 
 			filter( '<p>X<a href="">A</a>X</p>',					'<p>X<a>A</a>X</p>' );
 			filter( '<p>X<a>A</a>X</p>',							'<p>X<a>A</a>X</p>' );
@@ -715,7 +718,7 @@
 			filter( '<p data-cke-saved-foo="1">A</p>',				'<p>A</p>' );
 			filter( '<p data-cke-custom="1">A</p>',					'<p data-cke-custom="1">A</p>' );
 
-			var filter = createFilter( 'p[foo]' );
+			filter = createFilter( 'p[foo]' );
 			filter( '<p data-cke-saved-foo="1">A</p>',				'<p>A</p>' );
 			filter( '<p data-cke-saved-foo="1" foo="1">A</p>',		'<p data-cke-saved-foo="1" foo="1">A</p>' );
 			filter( '<p data-cke-custom="1">A</p>',					'<p data-cke-custom="1">A</p>' );
@@ -839,7 +842,7 @@
 			var filter = createFilter( 'p br' );
 			filter( '<div>A</div><div>B</div>',							'<p>A</p><p>B</p>',				'divs were replaced with p' );
 
-			var filter = createFilter( 'p br', false, CKEDITOR.ENTER_BR );
+			filter = createFilter( 'p br', false, CKEDITOR.ENTER_BR );
 			filter( '<div>A</div><div>B</div>',							'A<br />B',						'br was inserted between blocks' );
 		},
 
@@ -858,6 +861,15 @@
 				// Make sure we reset the enter mode even if test fails.
 				editors.themed.setActiveEnterMode( null );
 			}
+		},
+
+		'test filtering custom tags': function() {
+			var filter = createFilter( 'p bar' );
+
+			filter( '<p><bar>bar</bar></p>',						'<p><bar>bar</bar></p>' );
+			filter( '<bar><foo>bar</foo></bar>',					'<bar>bar</bar>' );
+			// #12683
+			filter( '<bar><h1>bar</h1></bar>',						'<p>bar</p>' );
 		}
 	};
 } )();

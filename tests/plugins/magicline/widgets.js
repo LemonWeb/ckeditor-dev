@@ -1,15 +1,16 @@
 /* bender-tags: editor,unit,magicline */
 /* bender-ckeditor-plugins: magicline,widget */
+/* global widgetTestsTools */
 
 ( function() {
 	'use strict';
 
 	var tools = widgetTestsTools,
-		nestedTplAc = new CKEDITOR.template( '<div id="{id}" class="u">' +
+		/*nestedTplAc = new CKEDITOR.template( '<div id="{id}" class="u">' +
 			'<div class="nested">' +
 				'<blockquote>u</blockquote>' +
 			'</div>' +
-		'</div>' ),
+		'</div>' ),*/
 		nonEditTpl = new CKEDITOR.template( '<div id="{id}" class="w">' +
 			'<div class="wa">wa</div>' +
 			'<div class="wb">wb</div>' +
@@ -171,10 +172,11 @@
 					else
 						assert.isNull( trigger.lower, 'Lower element doesn\'t exist' );
 
-				} else
+				} else {
 					assert.isNull( trigger, 'No valid trigger should be returned' );
+				}
 			} );
-		}
+		};
 	}
 
 	function c( html, cfg ) {
@@ -196,11 +198,11 @@
 
 				assert.isTrue( cfg.hotNode( widget ).equals( backdoor.that.hotNode ), 'A correct space must be accessed.' );
 			} );
-		}
+		};
 	}
 
 	bender.test( {
-		_should : {
+		_should: {
 			// FF inserts bogus before a widget so these tests
 			// are broken and make no sense.
 			ignore: CKEDITOR.env.gecko ?
@@ -743,7 +745,9 @@
 			hotNode: function( widget ) {
 				return widget.wrapper.getNext();
 			}
-		} ),
+		} )
+
+		/* See #12474
 
 		// --- ACF in nested ------------------------------------------------------------------------------------
 
@@ -790,5 +794,7 @@
 				return hotNode;
 			}
 		} )
+
+		*/
 	} );
 } )();

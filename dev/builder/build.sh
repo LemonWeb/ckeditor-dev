@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright (c) 2003-2014, CKSource - Frederico Knabben. All rights reserved.
+# Copyright (c) 2003-2015, CKSource - Frederico Knabben. All rights reserved.
 # For licensing, see LICENSE.md or http://ckeditor.com/license
 
 # Build CKEditor using the default settings (and build.js)
@@ -76,7 +76,7 @@ echo "Starting CKBuilder..."
 
 JAVA_ARGS=${ARGS// -t / } # Remove -t from arrgs
 
-java -jar ckbuilder/$CKBUILDER_VERSION/ckbuilder.jar -s -d 1 --no-zip --no-tar --build ../../ release --version="4.4.4 Stable" --build-config build-config.js --overwrite $JAVA_ARGS
+java -jar ckbuilder/$CKBUILDER_VERSION/ckbuilder.jar -s -d 1 --no-zip --no-tar --build ../../ release --version="4.4.7 Stable" --build-config build-config.js --overwrite $JAVA_ARGS
 
 echo ""
 echo "Suffixing icons.png in skins/moono/editor.css"

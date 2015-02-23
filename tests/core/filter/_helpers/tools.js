@@ -1,3 +1,5 @@
+/* exported acfTestTools */
+
 'use strict';
 
 var acfTestTools = ( function() {
@@ -65,7 +67,10 @@ var acfTestTools = ( function() {
 		return function( input, expected, msg ) {
 			if ( !toDF ) {
 				expected = replaceAtWithBogus( expected );
-				assert.areSame( expected, editor.dataProcessor.toHtml( input, '', false, dontFilter ), msg );
+				var html = editor.dataProcessor.toHtml( input, '', false, dontFilter );
+
+				// Use compatHtml to sortAttrubtes, because toHtml doesn't use external, configurable writer.
+				assert.areSame( expected, bender.tools.compatHtml( html, false, true ), msg );
 			} else {
 				assert.areSame( expected, editor.dataProcessor.toDataFormat( input ), msg );
 			}

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014, CKSource - Frederico Knabben. All rights reserved.
+ * Copyright (c) 2015, CKSource - Frederico Knabben. All rights reserved.
  * Licensed under the terms of the MIT License (see LICENSE.md).
  */
 
@@ -80,6 +80,32 @@
 		}
 	};
 
+	/**
+	 * Assert that expected value is in range (between min and max).
+	 *
+	 * @param {Number} expected
+	 * @param {Number} min
+	 * @param {Number} max
+	 * @param {String} [message]
+	 */
+	bender.assert.isNumberInRange = function( expected, min, max, message ) {
+		YTest.Assert._increment();
+
+		YTest.Assert.isNumber( expected, 'Expected value should be number type.' );
+		YTest.Assert.isNumber( min, 'Min value should be number type.' );
+		YTest.Assert.isNumber( max, 'Max value should be number type.' );
+
+		if ( min >= max ) {
+			throw new YUITest.AssertionError( 'Min value is greater or equal than max.' );
+		}
+
+		if ( expected < min || expected > max ) {
+			throw new YUITest.ComparisonFailure(
+				YUITest.Assert._formatMessage( message ),
+				expected
+			);
+		}
+	};
 
 	// add support test ignore
 	YUITest.Ignore = function() {};
@@ -111,7 +137,9 @@
 			} );
 		}
 
-		if ( typeof( test = node.testObject ) == 'string' ) {
+		test = node.testObject;
+
+		if ( typeof test == 'string' ) {
 			updateResult( node.parent, test );
 			// Ignore all tests in this whole test case
 		} else {
@@ -295,8 +323,6 @@
 				event.methodName = methodName;
 				if ( testObject instanceof YUITest.TestCase ) {
 					event.testCase = testObject;
-				} else {
-					event.testSuite = testSuite;
 				}
 
 				this.fire( event );
@@ -405,10 +431,36 @@
 		}
 	};
 
-	bender.startRunner = function( tests ) {
-		var testId = window.location.pathname
-			.replace( /^(\/|\/(?:jobs\/(?:\w+)\/tests)\/)/i, '' );
+	function onReady( callback ) {
+		function complete() {
+			if ( document.addEventListener ||
+				event.type === 'load' ||
+				document.readyState === 'complete' ) {
 
+				if ( document.removeEventListener ) {
+					document.removeEventListener( 'DOMContentLoaded', complete, false );
+					window.removeEventListener( 'load', complete, false );
+				} else {
+					document.detachEvent( 'onreadystatechange', complete );
+					window.detachEvent( 'onload', complete );
+				}
+
+				callback();
+			}
+		}
+
+		if ( document.readyState === 'complete' ) {
+			setTimeout( callback );
+		} else if ( document.addEventListener ) {
+			document.addEventListener( 'DOMContentLoaded', complete, false );
+			window.addEventListener( 'load', complete, false );
+		} else {
+			document.attachEvent( 'onreadystatechange', complete );
+			window.attachEvent( 'onload', complete );
+		}
+	}
+
+	bender.startRunner = function( tests ) {
 		tests = tests || bender.deferredTests;
 
 		if ( bender.deferredTests ) {
@@ -454,7 +506,7 @@
 			bender.oldTest( tests );
 		}
 
-		$( startRunner );
+		onReady( startRunner );
 	};
 
 	bender.getAbsolutePath = function( path ) {
@@ -482,7 +534,7 @@
 } )( this, bender );
 
 // workaround for IE8 - window.resume / window.wait won't work in this environment...
-var resume = bender.Y.Test.Case.prototype.resume = ( function() {
+var resume = bender.Y.Test.Case.prototype.resume = ( function() { // jshint ignore:line
 		var org = bender.Y.Test.Case.prototype.resume;
 
 		return function( segment ) {
@@ -494,7 +546,7 @@ var resume = bender.Y.Test.Case.prototype.resume = ( function() {
 		};
 	} )(),
 
-	wait = function( callback ) {
+	wait = function( callback ) { // jshint ignore:line
 		var args = [].slice.apply( arguments );
 
 		if ( args.length == 1 && typeof callback == 'function' ) {

@@ -171,9 +171,9 @@
 		'test allowedContent array - string format': function() {
 			var filter = new CKEDITOR.filter( 'p' );
 
-			filter.allow( 'a b', 'rule1' );
+			filter.allow( 'a b-c d', 'rule1' );
 			assertRule( filter, 'rule1', {
-				elements: { a: true, b: true }
+				elements: { a: true, 'b-c': true, d: true }
 			} );
 
 			filter.allow( '*[attr1]', 'rule2' );
@@ -547,6 +547,19 @@
 			assert.areSame( CKEDITOR.ENTER_P, filter4.getAllowedEnterMode( CKEDITOR.ENTER_P ), 'f4' );
 			assert.areSame( CKEDITOR.ENTER_P, filter4.getAllowedEnterMode( CKEDITOR.ENTER_P, true ), 'f4a - reverse' );
 			assert.areSame( CKEDITOR.ENTER_BR, filter4.getAllowedEnterMode( CKEDITOR.ENTER_BR, true ), 'f4b - reverse' );
+		},
+
+		'test destroy': function() {
+			var filter = new CKEDITOR.filter( 'p' ),
+				id = filter.id;
+
+			assert.areSame( filter, CKEDITOR.filter.instances[ id ], 'filter is registered before destroy' );
+
+			filter.destroy();
+			assert.isFalse( id in CKEDITOR.filter.instances, 'filter is not registered after destroy' );
+			assert.isFalse( '_' in filter, 'filter\'s private parts are deleted' );
+			assert.isFalse( 'allowedContent' in filter, 'filter.allowedContent is deleted' );
+			assert.isFalse( 'disallowedContent' in filter, 'filter.disallowedContent is deleted' );
 		}
 	} );
 } )();

@@ -3,13 +3,17 @@
 ( function() {
 	'use strict';
 
-	bender.editor = { creator: 'inline', config : { autoParagraph : false } };
+	bender.editor = {
+		creator: 'inline',
+		config: {
+			autoParagraph: false
+		}
+	};
 
 	var SRC = '%BASE_PATH%_assets/logo.png';
 
-	bender.test(
-	{
-		'test read image (inline styles)' : function() {
+	bender.test( {
+		'test read image (inline styles)': function() {
 			var bot = this.editorBot;
 
 			bot.setHtmlWithSelection( '[<img src="' + SRC + '" style="border:solid 2px;height:86px;margin:10px 5px;float:right;width:414px;">]' );
@@ -32,7 +36,7 @@
 			} );
 		},
 
-		'test read image (attributes)' : function() {
+		'test read image (attributes)': function() {
 			var bot = this.editorBot;
 
 			bot.setHtmlWithSelection( '[<img src="' + SRC + '" border="2" height="86" width="414" vspace="10" hspace="5" align="left">]' );
@@ -55,8 +59,8 @@
 			} );
 		},
 
-		'test read image (align)' : function() {
-			var bot = this.editorBot, tc = this;
+		'test read image (align)': function() {
+			var bot = this.editorBot;
 
 			bot.setHtmlWithSelection( '[<img src="' + SRC + '" align="texttop" style="float:inherit">]' );
 			bot.dialog( 'image', function( dialog ) {
@@ -67,15 +71,15 @@
 			} );
 		},
 
-		'test read image (inline v.s. attributes)' : function() {
+		'test read image (inline v.s. attributes)': function() {
 			var bot = this.editorBot;
 
-			bot.setHtmlWithSelection
-			(
-			'[<img src="' + SRC + '" ' +
-			'border="1" height="43" width="212" vspace="0" hspace="0" align="left" ' +
-			'style="border:solid 2px blue;width:414px;height:86px;margin:10px 5px;vertical-align:bottom;float:right">]'
+			bot.setHtmlWithSelection(
+				'[<img src="' + SRC + '" ' +
+				'border="1" height="43" width="212" vspace="0" hspace="0" align="left" ' +
+				'style="border:solid 2px blue;width:414px;height:86px;margin:10px 5px;vertical-align:bottom;float:right">]'
 			);
+
 			bot.dialog( 'image', function( dialog ) {
 				var widthField = dialog.getContentElement( 'info', 'txtWidth' ),
 						heightField = dialog.getContentElement( 'info', 'txtHeight' ),
@@ -95,23 +99,19 @@
 			} );
 		},
 
-		'test read image (border/margin styles)' : function() {
+		'test read image (border/margin styles)': function() {
 			var bot = this.editorBot;
 
-			bot.setHtmlWithSelection
-			(
-			'[<img src="' + SRC + '" ' +
-			'style="border-bottom-width:2px;border-left-width:2px;border-right-width:2px;border-top-width:2px;' +
-			'margin-bottom:10px;margin-left:5px;margin-right:5px;margin-top:10px;">]'
+			bot.setHtmlWithSelection(
+				'[<img src="' + SRC + '" ' +
+				'style="border-bottom-width:2px;border-left-width:2px;border-right-width:2px;border-top-width:2px;' +
+				'margin-bottom:10px;margin-left:5px;margin-right:5px;margin-top:10px;">]'
 			);
 
 			bot.dialog( 'image', function( dialog ) {
-				var widthField = dialog.getContentElement( 'info', 'txtWidth' ),
-						heightField = dialog.getContentElement( 'info', 'txtHeight' ),
-						borderField = dialog.getContentElement( 'info', 'txtBorder' ),
-						hspaceField = dialog.getContentElement( 'info', 'txtHSpace' ),
-						vspaceField = dialog.getContentElement( 'info', 'txtVSpace' ),
-						alignField = dialog.getContentElement( 'info', 'cmbAlign' );
+				var borderField = dialog.getContentElement( 'info', 'txtBorder' ),
+					hspaceField = dialog.getContentElement( 'info', 'txtHSpace' ),
+					vspaceField = dialog.getContentElement( 'info', 'txtVSpace' );
 
 				assert.areSame( 2, parseInt( borderField.getValue(), 10 ) );
 				assert.areSame( 5, parseInt( hspaceField.getValue(), 10 ) );
@@ -121,14 +121,13 @@
 			} );
 		},
 
-		'test read image (unrecognized border styles)' : function() {
+		'test read image (unrecognized border styles)': function() {
 			var bot = this.editorBot;
 
-			bot.setHtmlWithSelection
-			(
-			'[<img src="' + SRC + '" ' +
-			'style="border-style:solid;border-bottom-width:1px;border-left-width:2px;border-right-width:2px;border-top-width:2px;' +
-			'margin: 10px 5px 11px;">]'
+			bot.setHtmlWithSelection(
+				'[<img src="' + SRC + '" ' +
+				'style="border-style:solid;border-bottom-width:1px;border-left-width:2px;border-right-width:2px;border-top-width:2px;' +
+				'margin: 10px 5px 11px;">]'
 			);
 
 			bot.dialog( 'image', function( dialog ) {
@@ -141,11 +140,10 @@
 				assert.isNaN( parseInt( vspaceField.getValue(), 10 ) );
 
 				dialog.getButton( 'ok' ).click();
-
 			} );
 		},
 
-		'test read image (sync styles from advanced tab)' : function() {
+		'test read image (sync styles from advanced tab)': function() {
 			var bot = this.editorBot;
 
 			bot.setHtmlWithSelection( '[<img src="' + SRC + '" style="">]' );
@@ -174,12 +172,22 @@
 
 		'test update image (inline styles)': function() {
 			var bot = this.editorBot,
+				// jscs:disable maximumLineLength
 				standard = '<img src="' + SRC + '" style="border:2px solid;float:right;height:86px;margin:10px 5px;width:414px;" />',
 				outputIE = '<img src="' + SRC + '" style="border-bottom:2px solid;border-left:2px solid;border-right:2px solid;border-top:2px solid;float:right;height:86px;margin:10px 5px;width:414px;" />',
 				outputNewIE = '<img src="' + SRC + '" style="border:2px solid currentcolor;float:right;height:86px;margin:10px 5px;width:414px;" />',
 				outputNewIE2 = '<img src="' + SRC + '" style="border:2px solid currentcolor;border-image:none;float:right;height:86px;margin:10px 5px;width:414px;" />',
 				outputOpera = '<img src="' + SRC + '" style="border-bottom-color:currentcolor;border-bottom-style:solid;border-bottom-width:2px;border-left-color:currentcolor;border-left-style:solid;border-left-width:2px;border-right-color:currentcolor;border-right-style:solid;border-right-width:2px;border-top-color:currentcolor;border-top-style:solid;border-top-width:2px;float:right;height:86px;margin-bottom:10px;margin-left:5px;margin-right:5px;margin-top:10px;width:414px;" />',
-				outputSafari5 = '<img src="' + SRC + '" style="border-bottom-style:solid;border-bottom-width:2px;border-color:initial;border-left-style:solid;border-left-width:2px;border-right-style:solid;border-right-width:2px;border-top-style:solid;border-top-width:2px;float:right;height:86px;margin-bottom:10px;margin-left:5px;margin-right:5px;margin-top:10px;width:414px;" />';
+				outputSafari5 = '<img src="' + SRC + '" style="border-bottom-style:solid;border-bottom-width:2px;border-color:initial;border-left-style:solid;border-left-width:2px;border-right-style:solid;border-right-width:2px;border-top-style:solid;border-top-width:2px;float:right;height:86px;margin-bottom:10px;margin-left:5px;margin-right:5px;margin-top:10px;width:414px;" />',
+				// jscs:enable maximumLineLength
+				output =
+					( CKEDITOR.env.ie && CKEDITOR.env.version >= 11 ) ? outputNewIE2
+					: ( CKEDITOR.env.ie && document.documentMode > 8 ) ? outputNewIE
+					: CKEDITOR.env.ie ? outputIE
+					: CKEDITOR.env.gecko ? standard
+					: CKEDITOR.env.safari && CKEDITOR.env.version < 536 ? outputSafari5
+					: CKEDITOR.env.webkit ? standard
+					: outputOpera;
 
 			bot.setHtmlWithSelection( '[<img src="' + SRC + '" style="height:300px;width:200px;border: 1px solid;float:right"/>]' );
 			bot.dialog( 'image', function( dialog ) {
@@ -199,23 +207,25 @@
 
 				dialog.getButton( 'ok' ).click();
 
-				assert.areEqual(
-					( CKEDITOR.env.ie && ( CKEDITOR.env.version >= 11 ) ) ? outputNewIE2
-					: ( CKEDITOR.env.ie && !!( document.documentMode > 8 ) ) ? outputNewIE
-					: CKEDITOR.env.ie ? outputIE
-					: CKEDITOR.env.gecko ? standard
-					: CKEDITOR.env.safari && CKEDITOR.env.version < 536 ? outputSafari5
-					: CKEDITOR.env.webkit ? standard
-					: outputOpera , bot.getData( true ) );
+				assert.areEqual( output.toLowerCase(), bot.getData( true ) );
 			} );
 		},
 
 		'test update image (attributes)': function() {
 			var bot = this.editorBot,
+				// jscs:disable maximumLineLength
 				standard = '<img src="' + SRC + '" style="border-style:solid;border-width:2px;float:right;height:86px;margin:10px 5px;width:414px;" />',
 				outputIE = '<img src="' + SRC + '" style="border-bottom:2px solid;border-left:2px solid;border-right:2px solid;border-top:2px solid;float:right;height:86px;margin:10px 5px;width:414px;" />',
 				outputOpera = '<img src="' + SRC + '" style="border-bottom-style:solid;border-bottom-width:2px;border-left-style:solid;border-left-width:2px;border-right-style:solid;border-right-width:2px;border-top-style:solid;border-top-width:2px;float:right;height:86px;margin-bottom:10px;margin-left:5px;margin-right:5px;margin-top:10px;width:414px;" />',
-				outputSafari5 = '<img src="' + SRC + '" style="border-bottom-style:solid;border-bottom-width:2px;border-left-style:solid;border-left-width:2px;border-right-style:solid;border-right-width:2px;border-top-style:solid;border-top-width:2px;float:right;height:86px;margin-bottom:10px;margin-left:5px;margin-right:5px;margin-top:10px;width:414px;" />';
+				outputSafari5 = '<img src="' + SRC + '" style="border-bottom-style:solid;border-bottom-width:2px;border-left-style:solid;border-left-width:2px;border-right-style:solid;border-right-width:2px;border-top-style:solid;border-top-width:2px;float:right;height:86px;margin-bottom:10px;margin-left:5px;margin-right:5px;margin-top:10px;width:414px;" />',
+				// jscs:enable maximumLineLength
+				output =
+					( CKEDITOR.env.ie && document.documentMode > 8 ) ? standard
+					: CKEDITOR.env.ie ? outputIE
+					: CKEDITOR.env.gecko ? standard
+					: CKEDITOR.env.safari && CKEDITOR.env.version < 536 ? outputSafari5
+					: CKEDITOR.env.webkit ? standard
+					: outputOpera;
 
 			bot.setHtmlWithSelection( '[<img src="' + SRC + '" height="300" width="200" border="1" align="right" vspace="10" hspace="5"/>]' );
 			bot.dialog( 'image', function( dialog ) {
@@ -235,19 +245,12 @@
 
 				dialog.getButton( 'ok' ).click();
 
-				assert.areEqual(
-					( CKEDITOR.env.ie && !!( document.documentMode > 8 ) ) ? standard
-					: CKEDITOR.env.ie ? outputIE
-					: CKEDITOR.env.gecko ? standard
-					: CKEDITOR.env.safari && CKEDITOR.env.version < 536 ? outputSafari5
-					: CKEDITOR.env.webkit ? standard
-					: outputOpera, bot.getData( true ) );
+				assert.areEqual( output.toLowerCase(), bot.getData( true ) );
 			} );
 		},
 
-		'test update image (remove)' : function() {
+		'test update image (remove)': function() {
 			var bot = this.editorBot,
-				input = '<img src="' + SRC + '" height="300" width="200" border="1" align="right" vspace="10" hspace="5"/>',
 				output = '<img src="' + SRC + '" />';
 
 			bot.setHtmlWithSelection( '[<img src="' + SRC + '" height="300" width="200" border="1" align="right" vspace="10" hspace="5"/>]' );
@@ -267,7 +270,7 @@
 				alignField.setValue( '' );
 
 				dialog.getButton( 'ok' ).click();
-				assert.areEqual( output, bot.getData( true ) );
+				assert.areEqual( output.toLowerCase(), bot.getData( true ) );
 			} );
 		},
 
@@ -319,7 +322,7 @@
 				name: 'editor_disallowed_dimension',
 				creator: 'inline',
 				config: {
-					disallowedContent : 'img{width, height}[width, height]'
+					disallowedContent: 'img{width, height}[width, height]'
 				}
 			},
 			function( bot ) {
@@ -350,7 +353,7 @@
 			var bot = this.editorBot,
 				editor = bot.editor;
 
-			bot.setHtmlWithSelection( '<p>^</p>' );
+			bot.setHtmlWithSelection( '<p>^foo</p>' );
 			bot.dialog( 'image', function( dialog ) {
 				var imgUrl = '%BASE_PATH%_assets/logo.png';
 

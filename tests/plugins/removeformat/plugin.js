@@ -114,13 +114,14 @@ bender.test(
 				'</div>' +
 			'</div>' +
 			'<p><em>}baz</em></p>' );
-			var expected = '<h1><em>fo</em>o</h1>' +
-				'<div contenteditable="false">' +
-					'<div contenteditable="true">' +
-						'<em>bar</em>' +
-					'</div>' +
+
+		var expected = '<h1><em>fo</em>o</h1>' +
+			'<div contenteditable="false">' +
+				'<div contenteditable="true">' +
+					'<em>bar</em>' +
 				'</div>' +
-				'<p><em>baz</em></p>';
+			'</div>' +
+			'<p><em>baz</em></p>';
 
 		bot.editor.execCommand( 'removeFormat' );
 
@@ -129,12 +130,20 @@ bender.test(
 		bender.assert.isInnerHtmlMatching( expected, data );
 	},
 
+	// #12311
+	'test remove format for cite element': function() {
+		this.editorBot.setHtmlWithSelection( '<p>[foo <cite>bar</cite> baz]</p>' );
+		this.editor.execCommand( 'removeFormat' );
+
+		assert.areEqual( '<p>foo bar baz</p>', this.editor.getData(), 'Cite element should be removed.' );
+	},
+
 	'test editor#addRemoveFormatFilter': function() {
 		bender.editorBot.create( {
 			name: 'test_editor2',
 			config: { allowedContent: true }
 		}, function( bot ) {
-			bot.setHtmlWithSelection( '[<p><span style="color:red">foo</span> <b>bar</b></p>]' );
+			bot.setHtmlWithSelection( '<p>[<span style="color:red">foo</span> <b>bar</b>]</p>' );
 
 			bot.editor.addRemoveFormatFilter( function( element ) {
 				return !element.is( 'b' ); // Don't remove 'b' elements.

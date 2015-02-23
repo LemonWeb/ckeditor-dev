@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014, CKSource - Frederico Knabben. All rights reserved.
+ * Copyright (c) 2015, CKSource - Frederico Knabben. All rights reserved.
  * Licensed under the terms of the MIT License (see LICENSE.md).
  */
 
@@ -295,7 +295,7 @@
 				// 3. Strip whitepsaces around semicolon.
 				// 4. Always end with semicolon
 				return retval.replace( /(?:^|;)\s*([A-Z-_]+)(:\s*)/ig,
-						function( match, property, colon ) {
+						function( match, property ) {
 							return property.toLowerCase() + ': ';
 						} )
 					.replace( /\s+(?:;\s*|$)/g, ';' )
@@ -595,8 +595,7 @@
 				element.setHtml( html );
 			}
 
-			var doc = element.getDocument(),
-				ranges = [],
+			var ranges = [],
 				// Walk prepared to traverse the inner dom tree of this element.
 				walkerRange = new CKEDITOR.dom.range( root );
 
@@ -1001,10 +1000,10 @@
 						}
 					}
 				}
-			};
+			}
 
 			return function( element, html ) {
-				root = element.getDocument().getBody();
+				root = element;
 
 				// First, let's assume that there will be no range.
 				range = null;
@@ -1042,7 +1041,7 @@
 				}
 
 				return range;
-			}
+			};
 		} )(),
 
 		/**
@@ -1106,7 +1105,7 @@
 				return clone;
 			}
 
-			var html, clone,
+			var clone,
 				startMarker, endMarker,
 				addressLength, startAddress, endAddress,
 				startContainer, endContainer;
@@ -1198,7 +1197,7 @@
 			}
 
 			return bender.tools.range.getWithHtml( editor.editable(), ranges[ 0 ] );
-		},
+		}
 	};
 
 	bender.tools.html = {
